@@ -76,7 +76,6 @@ jest-results.json
 .env.production.local
 
 # npm package lock
-package-lock.json
 pnpm-lock.yaml
 
 # OS generated files
