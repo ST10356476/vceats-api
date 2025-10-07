@@ -20,6 +20,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
+// Small logger that only prints in non-production environments
+const isProd = process.env.NODE_ENV === 'production';
+const log = {
+    info: (...args) => { if (!isProd) console.log(...args); },
+    error: (...args) => { if (!isProd) console.error(...args); }
+};
+
 // Database connection helper
 const connectDB = async (uri) => {
     const mongoUri = uri || process.env.MONGODB_URI || 'mongodb://localhost:27017/vceats';
@@ -28,9 +35,11 @@ const connectDB = async (uri) => {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        console.log('✅ MongoDB connected successfully');
+        log.info('✅ MongoDB connected successfully');
     } catch (err) {
-        console.error('❌ MongoDB connection error:', err);
+        log.error('❌ MongoDB connection error:');
+        // Only print error stack when not in production
+        if (!isProd) log.error(err);
         throw err;
     }
 };
@@ -53,7 +62,8 @@ app.get('/api/health', (req, res) => {
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-    console.error(err.stack);
+    // Avoid leaking stack traces in production
+    if (!isProd) console.error(err.stack);
     res.status(err.status || 500).json({
         error: {
             message: err.message || 'Internal Server Error',
@@ -78,12 +88,15 @@ if (require.main === module) {
     connectDB()
         .then(() => {
             app.listen(PORT, () => {
-                console.log(`🚀 VCEats API server running on port ${PORT}`);
-                console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
+                if (!isProd) {
+                    console.log(`🚀 VCEats API server running on port ${PORT}`);
+                    console.log(`📍 Health check: http://localhost:${PORT}/api/health`);
+                }
             });
         })
         .catch(err => {
-            console.error('Failed to start server due to DB error:', err);
+            log.error('Failed to start server due to DB error:');
+            if (!isProd) log.error(err);
             process.exit(1);
         });
 }

@@ -6,12 +6,12 @@ const MenuItem = require('../models/MenuItem');
 const seedData = async () => {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
-        console.log('✅ Connected to MongoDB');
+        if (process.env.NODE_ENV !== 'production') console.log('✅ Connected to MongoDB');
 
         // Clear existing data
         await User.deleteMany({});
         await MenuItem.deleteMany({});
-        console.log('🗑️  Cleared existing data');
+    if (process.env.NODE_ENV !== 'production') console.log('🗑️  Cleared existing data');
 
         // Create users
         const users = await User.create([
@@ -37,7 +37,7 @@ const seedData = async () => {
                 department: 'Management'
             }
         ]);
-        console.log('✅ Created users');
+    if (process.env.NODE_ENV !== 'production') console.log('✅ Created users');
 
         // Create menu items
         const menuItems = await MenuItem.create([
@@ -157,17 +157,14 @@ const seedData = async () => {
                 allergens: ['Dairy']
             }
         ]);
-        console.log('✅ Created menu items');
-
-        console.log('\n✨ Database seeded successfully!');
-        console.log('\n📝 Test Accounts:');
-        console.log('Student: student@varsity.ac.za / password');
-        console.log('Staff: staff@varsity.ac.za / password');
-        console.log('Admin: admin@varsity.ac.za / password');
+        if (process.env.NODE_ENV !== 'production') {
+            console.log('✅ Created menu items');
+            console.log('\n✨ Database seeded successfully!');
+        }
 
         process.exit(0);
     } catch (error) {
-        console.error('❌ Error seeding database:', error);
+        if (process.env.NODE_ENV !== 'production') console.error('❌ Error seeding database:', error);
         process.exit(1);
     }
 };
