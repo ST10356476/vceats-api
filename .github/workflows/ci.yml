@@ -24,7 +24,9 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        # Use `npm install` instead of `npm ci` because some repos may not have a lockfile checked in.
+        # For reproducible CI builds, commit package-lock.json and restore `npm ci`.
+        run: npm install
 
       - name: Run tests
         run: npm test
