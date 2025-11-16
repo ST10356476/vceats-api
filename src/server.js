@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const morgan = require('morgan');
+const path = require('path');
 
 // Import routes
 const authRoutes = require('./routes/auth.routes');
@@ -10,6 +11,7 @@ const menuRoutes = require('./routes/menu.routes');
 const orderRoutes = require('./routes/order.routes');
 const notificationRoutes = require('./routes/notification.routes');
 const userRoutes = require('./routes/user.routes');
+const dashboardRoutes = require('./routes/dashboard.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -50,6 +52,18 @@ app.use('/api/menu', menuRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/users', userRoutes);
+// Dashboard static page and API
+app.use('/public', express.static(path.join(__dirname, '..', 'public')));
+app.use('/api/dashboard', dashboardRoutes);
+
+// Respond to Chrome DevTools app-specific probe to avoid noisy 404s
+// Accept any method and any path under /.well-known/appspecific to silence probes
+// Use a named param with a wildcard to avoid path-to-regexp errors
+// Use a regular expression route to match any path under /.well-known/appspecific/
+app.all(/^\/\.well-known\/appspecific\/.*$/, (req, res) => {
+    // Return 204 No Content for probe requests
+    return res.status(204).end();
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VCEats Staff Dashboard</title>
+    <link rel="stylesheet" href="/public/css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>VCEats Staff Dashboard</h1>
+
+      <div class="token-input">
+        <label for="token">JWT Token (paste here):</label>
+        <input id="token" type="text" placeholder="Bearer ey..." />
+        <button id="loadBtn">Load Dashboard</button>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>Total Orders</h3>
+          <p id="totalOrders">—</p>
+        </div>
+        <div class="card">
+          <h3>Total Sales</h3>
+          <p id="totalSales">—</p>
+        </div>
+      </div>
+
+      <div class="charts">
+        <div class="chart-block">
+          <h4>Orders by Status</h4>
+          <canvas id="statusChart"></canvas>
+        </div>
+        <div class="chart-block">
+          <h4>Orders (Last 7 days)</h4>
+          <canvas id="ordersDayChart"></canvas>
+        </div>
+        <div class="chart-block">
+          <h4>Top Menu Items (30 days)</h4>
+          <canvas id="topItemsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script src="/public/js/dashboard.js"></script>
+  </body>
+</html>
